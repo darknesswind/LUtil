@@ -12,7 +12,7 @@ class LFile
 {
 public:
 	LFile() {}
-	~LFile() { if (m_hFile) fclose(m_hFile); }
+	~LFile() { close(); }
 
 	typedef const wchar_t* CWStrPtr;
 	typedef const char* CStrPtr;
@@ -24,11 +24,15 @@ public:
 	template <typename T> size_t readAs(T* pBuf, size_t cnt);
 	template <typename T> T read();
 	ByteArray readToEnd();
+	template <typename T> size_t getAs(T& var);
 
 	bool openWrite(CStrPtr pFileName);
 	bool openWrite(CWStrPtr pFileName);
 	template <typename T> size_t write(T& var);
 	template <typename T> size_t write(T* pBuf, size_t cnt);
+
+	void close() { if (m_hFile) fclose(m_hFile); }
+	void reset() { fseek(m_hFile, 0, SEEK_SET); }
 
 	bool opened() const { return m_hFile != nullptr; }
 	fpos_t size() const { return m_size; }
@@ -63,9 +67,17 @@ size_t LFile::readAs(T* pBuf, size_t cnt)
 template <typename T>
 T LFile::read()
 {
-	T res = 0;
+	T res;
 	readAs(res);
 	return res;
+}
+
+template <typename T>
+size_t LFile::getAs(T& var)
+{
+	size_t sz = fgets(&var, sizeof(T), m_hFile);
+	CheckSize(sizeof(T), sz);
+	return sz;
 }
 
 template <typename T>

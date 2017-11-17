@@ -147,12 +147,14 @@
   <ItemGroup>
     <ClInclude Include="LFile.h" />
     <ClInclude Include="LString.h" />
+    <ClInclude Include="LTextStream.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="LFile.cpp" />
     <ClCompile Include="LString.cpp" />
+    <ClCompile Include="LTextStream.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
