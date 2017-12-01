@@ -40,17 +40,17 @@ bool LTextStream::openRead(const char* szFile)
 	return true;
 }
 
-wchar_t LTextStream::readChar()
+char16_t LTextStream::readChar()
 {
 	return ((*this).*m_fnReadChar)();
 }
 
-wchar_t LTextStream::readUtf16LEChar()
+char16_t LTextStream::readUtf16LEChar()
 {
-	return m_file.read<wchar_t>();
+	return m_file.read<char16_t>();
 }
 
-wchar_t LTextStream::readUtf8Char()
+char16_t LTextStream::readUtf8Char()
 {
 	//UTF8 ±‡¬Î∏Ò Ω£∫
 	//     U-00000000 - U-0000007F: 0xxxxxxx  
@@ -64,17 +64,17 @@ wchar_t LTextStream::readUtf8Char()
 		return byte;
 	else if (byte & 0xE0 == 0xC0)
 	{
-		wchar_t wch = (byte & 0x1F);
+		char16_t wch = (byte & 0x1F);
 		char byte2 = (m_file.read<char>() & 0x3F);
 		return ((wch << 6) | byte2);
 	}
 	else if (byte & 0xF0 == 0xE0)
 	{
-		wchar_t wch = (byte & 0x0F);
+		char16_t wch = (byte & 0x0F);
 		char byte2 = (m_file.read<char>() & 0x3F);
 		char byte3 = (m_file.read<char>() & 0x3F);
 		return ((((wch << 6) | byte2) << 6) | byte3);
 	}
 	else // utf32 not support
-		return L' ';
+		return u'_';
 }

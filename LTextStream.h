@@ -13,12 +13,13 @@ public:
 	~LTextStream();
 
 	bool openRead(const char* szFile);
-	wchar_t readChar();
+	bool isEnd() const { return m_file.eof(); }
+	char16_t readChar();
 
 private:
-	typedef wchar_t (LTextStream::*ReadCharFunction)();
-	wchar_t readUtf16LEChar();
-	wchar_t readUtf8Char();
+	typedef char16_t (LTextStream::*ReadCharFunction)();
+	char16_t readUtf16LEChar();
+	char16_t readUtf8Char();
 
 private:
 	LFile m_file;
