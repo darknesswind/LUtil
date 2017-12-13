@@ -34,7 +34,9 @@ public:
 
 	LString& setNum(int val, int base = 10);
 	LString& setNum(unsigned int val, int base = 10);
+	LString& setNum(unsigned long val, int base = 10);
 	LString& setNum(float val, int prec = 6);
+	LString& setPtr32(void* ptr);
 
 	std::string toUtf8() const;
 
@@ -45,6 +47,7 @@ public:
 	LString mid(size_type off, size_type size = Base::npos) const { return Base::substr(off, size); }
 public:
 	static LString number(int val, int base = 10) { return LString().setNum(val, base); }
+	static LString number(unsigned int val, int base = 10) { return LString().setNum(val, base); }
 	static LString number(float val, int prec = 6) { return LString().setNum(val, prec); }
 	static LString fromUtf8(const std::string& bytes);
 	static void setLocal(std::locale& locale) { s_defaultLocale = locale; }
@@ -75,6 +78,9 @@ public:
 	LStrBuilder& arg(CWStrPtr val);
 	LStrBuilder& arg(int val);
 	LStrBuilder& arg(int val, size_t fieldWidth, int base, wchar_t fillChar);
+	LStrBuilder& arg(unsigned int val) { return arg((unsigned long)val); }
+	LStrBuilder& arg(unsigned long val);
+	LStrBuilder& arg(void* ptr);
 	LStrBuilder& arg(float val);
 
 	LStrBuilder& arg(const std::wstring& val) { return arg(val.c_str()); }

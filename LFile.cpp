@@ -1,7 +1,9 @@
 #include "stdafx.h"
 #include "LFile.h"
 #include <numeric>
-
+#ifdef max
+#undef max
+#endif
 bool LFile::openRead(CStrPtr pFileName)
 {
 	if (!open(pFileName, fopen_s, "rb"))

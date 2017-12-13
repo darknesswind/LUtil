@@ -24,6 +24,6 @@ private:
 private:
 	LFile m_file;
 	CodePage m_codepage{ cpUtf8 };
-	ReadCharFunction m_fnReadChar{ &readUtf8Char };
+	ReadCharFunction m_fnReadChar{ &LTextStream::readUtf8Char };
 };
 

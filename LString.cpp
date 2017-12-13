@@ -95,6 +95,27 @@ LString& LString::setNum(float val, int prec /*= 6*/)
 	return (*this);
 }
 
+LString& LString::setNum(unsigned long val, int base /*= 10*/)
+{
+	const size_t buffsize = 33;
+	wchar_t buff[buffsize] = { 0 };
+	errno_t err = _ultow_s(val, buff, base);
+	assert(0 == err);
+	Base::assign(buff);
+	return (*this);
+}
+
+LString& LString::setPtr32(void* ptr)
+{
+	const size_t buffsize = 35;
+	const size_t prefixSize = 2;
+	wchar_t buff[buffsize] = { L'0', L'x', 0 };
+	errno_t err = _ultow_s((unsigned long)ptr, (wchar_t*)buff + prefixSize, buffsize - prefixSize, 16);
+	assert(0 == err);
+	Base::assign(buff);
+	return (*this);
+}
+
 std::string LString::toUtf8() const
 {
 	std::wstring_convert<std::codecvt_utf8<wchar_t>> conv;
@@ -328,5 +349,23 @@ LStrBuilder& LStrBuilder::arg(int val, size_t fieldWidth, int base, wchar_t fill
 LStrBuilder& LStrBuilder::arg(float val)
 {
 	m_args.emplace_back(LString::number(val));
+	return (*this);
+}
+
+LStrBuilder& LStrBuilder::arg(void* ptr)
+{
+	LString str;
+	str.setNum((unsigned int)ptr, 16);
+	if (!str.empty() && str.size() <= 8)
+	{
+		m_args.emplace_back(LString(L"0x00000000"));
+		memcpy(&m_args.back()[m_args.back().size() - str.size()], str.c_str(), sizeof(wchar_t) * str.size());
+	}
+	return (*this);
+}
+
+LStrBuilder& LStrBuilder::arg(unsigned long val)
+{
+	m_args.push_back(LString().setNum(val));
 	return (*this);
 }

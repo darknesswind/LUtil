@@ -19,8 +19,8 @@ bool LTextStream::openRead(const char* szFile)
 	char head[4] = { 0 };
 	m_file.getAs(head);
 
-	const char bomUtf8[] = { 0xEF, 0xBB, 0xBF };
-	const char bomUtf16le[] = { 0xFF, 0xFE };
+	const char bomUtf8[] = { '\xEF', '\xBB', '\xBF' };
+	const char bomUtf16le[] = { '\xFF', '\xFE' };
 
 	if (0 == memcmp(head, bomUtf16le, sizeof(bomUtf16le)))
 		m_codepage = cpUtf16LE;
@@ -60,15 +60,15 @@ char16_t LTextStream::readUtf8Char()
 	//     U-00200000 - U-03FFFFFF: 111110xx 10xxxxxx 10xxxxxx 10xxxxxx 10xxxxxx  
 	//     U-04000000 - U-7FFFFFFF: 1111110x 10xxxxxx 10xxxxxx 10xxxxxx 10xxxxxx 10xxxxxx  
 	char byte = m_file.read<char>();
-	if (byte & 0x80 == 0)
+	if ((byte & 0x80) == 0)
 		return byte;
-	else if (byte & 0xE0 == 0xC0)
+	else if ((byte & 0xE0) == 0xC0)
 	{
 		char16_t wch = (byte & 0x1F);
 		char byte2 = (m_file.read<char>() & 0x3F);
 		return ((wch << 6) | byte2);
 	}
-	else if (byte & 0xF0 == 0xE0)
+	else if ((byte & 0xF0) == 0xE0)
 	{
 		char16_t wch = (byte & 0x0F);
 		char byte2 = (m_file.read<char>() & 0x3F);

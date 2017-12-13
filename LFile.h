@@ -75,8 +75,8 @@ T LFile::read()
 template <typename T>
 size_t LFile::getAs(T& var)
 {
-	size_t sz = fgets(&var, sizeof(T), m_hFile);
-	CheckSize(sizeof(T), sz);
+	size_t sz = readAs(var);
+	fseek(m_hFile, -(long)sz, SEEK_CUR);
 	return sz;
 }
 
@@ -91,7 +91,7 @@ size_t LFile::write(T& var)
 template <typename T>
 size_t LFile::write(T* pBuf, size_t cnt)
 {
-	size_t sz = fwrite(pBuf, sizeof(T), cnt, m_hFile);
+	size_t sz = fwrite(reinterpret_cast<const void*>(pBuf), sizeof(T), cnt, m_hFile);
 	CheckSize(sizeof(T) * cnt, sz);
 	return sz;
 }
