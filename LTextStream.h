@@ -13,7 +13,7 @@ public:
 	~LTextStream();
 
 	bool openRead(const char* szFile);
-	bool isEnd() const { return m_file.eof(); }
+	bool eof() const { return m_file.eof(); }
 	char16_t readChar();
 
 private:

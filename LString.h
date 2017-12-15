@@ -19,6 +19,7 @@ class LString : public std::wstring
 public:
 	LString() = default;
 	LString(CWStrPtr wcstr) : Base(wcstr) {}
+	LString(const char16_t* wcstr) : Base((CWStrPtr)wcstr) {}
 	LString(CStrPtr cstr) { assign(cstr); }
 	LString(Base&& base) : Base(base) {}
 	LString(size_t n, wchar_t c) : Base(n, c) {}

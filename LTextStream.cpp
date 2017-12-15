@@ -61,7 +61,9 @@ char16_t LTextStream::readUtf8Char()
 	//     U-04000000 - U-7FFFFFFF: 1111110x 10xxxxxx 10xxxxxx 10xxxxxx 10xxxxxx 10xxxxxx  
 	char byte = m_file.read<char>();
 	if ((byte & 0x80) == 0)
+	{
 		return byte;
+	}
 	else if ((byte & 0xE0) == 0xC0)
 	{
 		char16_t wch = (byte & 0x1F);
@@ -76,5 +78,13 @@ char16_t LTextStream::readUtf8Char()
 		return ((((wch << 6) | byte2) << 6) | byte3);
 	}
 	else // utf32 not support
+	{
+		if ((byte & 0xF8) == 0xF0)
+			m_file.skip(3);
+		else if ((byte & 0xFC) == 0xF8)
+			m_file.skip(4);
+		else if ((byte & 0xFE) == 0xFC)
+			m_file.skip(5);
 		return u'_';
+	}
 }

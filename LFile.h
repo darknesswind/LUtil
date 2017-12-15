@@ -7,6 +7,9 @@
 #include <cassert>
 #endif
 #define CheckSize(lhs, rhs) assert(lhs == rhs);
+#ifdef max
+#undef max
+#endif
 
 class LFile
 {
@@ -33,11 +36,17 @@ public:
 
 	void close() { if (m_hFile) fclose(m_hFile); }
 	void reset() { fseek(m_hFile, 0, SEEK_SET); }
+	void skip(long sz) { fseek(m_hFile, sz, SEEK_CUR); }
 
 	bool opened() const { return m_hFile != nullptr; }
 	fpos_t size() const { return m_size; }
-	bool eof() const { return (0 != feof(m_hFile)); }
 	errno_t error() const { return ferror(m_hFile); }
+	bool eof() const
+	{
+		fpos_t cur = 0;
+		fgetpos(m_hFile, &cur);
+		return (cur >= m_size || 0 != feof(m_hFile));
+	}
 
 private:
 	template <typename CharType, typename Function>
@@ -53,7 +62,7 @@ size_t LFile::readAs(T& var)
 {
 	size_t sz = fread_s((void*)&var, sizeof(T), sizeof(T), 1, m_hFile);
 	CheckSize(1, sz);
-	return sz;
+	return sizeof(T);
 }
 
 template <typename T>
@@ -75,6 +84,7 @@ T LFile::read()
 template <typename T>
 size_t LFile::getAs(T& var)
 {
+	static_assert(sizeof(T) <= std::numeric_limits<long>::max(), "size too large");
 	size_t sz = readAs(var);
 	fseek(m_hFile, -(long)sz, SEEK_CUR);
 	return sz;
