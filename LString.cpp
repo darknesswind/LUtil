@@ -122,6 +122,25 @@ std::string LString::toUtf8() const
 	return conv.to_bytes(c_str());
 }
 
+void LString::tolower()
+{
+	for (auto iter = begin(); iter != end(); ++iter)
+	{
+		wchar_t& ch = *iter;
+		if (ch < u'\xF0')
+			continue;
+
+		ch = towlower(ch);
+	}
+}
+
+LString LString::toLowerString() const
+{
+	LString result(*this);
+	result.tolower();
+	return result;
+}
+
 int LString::toInt(bool* pOk) const
 {
 	const int result = _wtoi(c_str());

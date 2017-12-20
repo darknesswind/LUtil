@@ -15,7 +15,20 @@ bool LTextStream::openRead(const char* szFile)
 {
 	if (!m_file.openRead(szFile))
 		return false;
+	init();
+	return true;
+}
 
+bool LTextStream::openRead(const wchar_t* szFile)
+{
+	if (!m_file.openRead(szFile))
+		return false;
+	init();
+	return true;
+}
+
+void LTextStream::init()
+{
 	char head[4] = { 0 };
 	m_file.getAs(head);
 
@@ -37,7 +50,6 @@ bool LTextStream::openRead(const char* szFile)
 		m_fnReadChar = &LTextStream::readUtf8Char;
 		break;
 	}
-	return true;
 }
 
 char16_t LTextStream::readChar()

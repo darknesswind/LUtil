@@ -40,6 +40,8 @@ public:
 	LString& setPtr32(void* ptr);
 
 	std::string toUtf8() const;
+	void tolower();
+	LString toLowerString() const;
 
 	int toInt(bool* pOk = nullptr) const;
 	double toNumber(bool* pOk = nullptr) const;
