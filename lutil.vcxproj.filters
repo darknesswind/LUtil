@@ -30,6 +30,15 @@
     <ClInclude Include="LTextStream.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="include\utiltype.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="lstream.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="lrefobject.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">

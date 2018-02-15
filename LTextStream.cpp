@@ -1,6 +1,5 @@
 #include "stdafx.h"
 #include "LTextStream.h"
-// #include "windows.h"
 
 LTextStream::LTextStream()
 {
@@ -36,9 +35,17 @@ void LTextStream::init()
 	const char bomUtf16le[] = { '\xFF', '\xFE' };
 
 	if (0 == memcmp(head, bomUtf16le, sizeof(bomUtf16le)))
+	{
 		m_codepage = cpUtf16LE;
+		m_file.skip(sizeof(bomUtf16le));
+		m_pos = sizeof(bomUtf16le);
+	}
 	else if (0 == memcmp(head, bomUtf8, sizeof(bomUtf8)))
+	{
 		m_codepage = cpUtf8;
+		m_file.skip(sizeof(bomUtf8));
+		m_pos = sizeof(bomUtf8);
+	}
 
 	switch (m_codepage)
 	{
@@ -50,9 +57,31 @@ void LTextStream::init()
 		m_fnReadChar = &LTextStream::readUtf8Char;
 		break;
 	}
+	readChar();
 }
 
 char16_t LTextStream::readChar()
+{
+	if (m_pos < m_file.size())
+	{
+		++m_pos;
+		++m_col;
+		m_prevChar = m_currChar;
+		m_currChar = m_nextChar;
+		if (m_pos < m_file.size() - 1)
+			m_nextChar = read();
+		else
+			m_nextChar = 0;
+		if (m_prevChar == u'\n')
+		{
+			++m_row;
+			m_col = 0;
+		}
+	}
+	return m_currChar;
+}
+
+inline char16_t LTextStream::read()
 {
 	return ((*this).*m_fnReadChar)();
 }
