@@ -10,6 +10,7 @@
 #ifndef assert
 #include <cassert>
 #endif
+#include <windows.h>
 
 std::locale LString::s_defaultLocale;
 
@@ -118,8 +119,25 @@ LString& LString::setPtr32(void* ptr)
 
 std::string LString::toUtf8() const
 {
+#if _HAS_CXX17
+	if (empty())
+		return std::string();
+
+	std::string result;
+	int szNew = WideCharToMultiByte(CP_UTF8, 0, c_str(), size(), NULL, NULL, NULL, NULL);
+	if (szNew)
+	{
+		result.resize(szNew);
+		szNew = WideCharToMultiByte(CP_UTF8, 0, c_str(), size(), result.data(), result.size(), NULL, NULL);
+	}
+	if (szNew)
+		return result;
+	else
+		return std::string();
+#else
 	std::wstring_convert<std::codecvt_utf8<wchar_t>> conv;
 	return conv.to_bytes(c_str());
+#endif
 }
 
 void LString::tolower()
@@ -171,8 +189,25 @@ double LString::toNumber(bool* pOk) const
 
 LString LString::fromUtf8(const std::string& bytes)
 {
+#if _HAS_CXX17
+	if (bytes.empty())
+		return LString();
+
+	LString result;
+	int szNew = MultiByteToWideChar(CP_UTF8, 0, bytes.c_str(), bytes.size(), NULL, 0);
+	if (szNew)
+	{
+		result.resize(szNew, 0);
+		szNew = MultiByteToWideChar(CP_UTF8, 0, bytes.c_str(), bytes.size(), result.data(), result.size());
+	}
+	if (szNew)
+		return result;
+	else
+		return LString();
+#else
 	std::wstring_convert<std::codecvt_utf8<wchar_t>> conv;
 	return conv.from_bytes(bytes);
+#endif
 }
 
 //////////////////////////////////////////////////////////////////////////
